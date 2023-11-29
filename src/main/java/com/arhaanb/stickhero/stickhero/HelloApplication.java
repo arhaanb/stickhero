@@ -7,7 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class HelloApplication extends Application {
-Player player;
+
+  Player player;
 
   /**
    * @param args the command line arguments
@@ -26,6 +27,7 @@ Player player;
     );
     Scene scene;
     scene = new Scene(fxmlLoader.load());
+
     primaryStage.setTitle("Hello!");
     primaryStage.setScene(scene);
     primaryStage.setResizable(false);
