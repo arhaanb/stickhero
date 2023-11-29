@@ -1,27 +1,29 @@
 package com.arhaanb.stickhero.stickhero;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
-import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Rotate;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -29,12 +31,36 @@ public class PlayController {
 
   private Stage stage;
   private Scene scene;
+  private Integer score = 0;
+  private Integer blockNum = 0;
+
+  public static int getRandomNumberBetween(int min, int max) {
+    if (min > max) {
+      throw new IllegalArgumentException("Max must be greater than min");
+    }
+
+    Random random = new Random();
+    return random.nextInt((max - min) + 1) + min;
+  }
 
   @FXML
   private AnchorPane pane;
 
   @FXML
-  private Rectangle rect;
+  private Button closebtn;
+
+  @FXML
+  private Text scoretext;
+
+  private ImageView imageView;
+
+  Boolean mouseHoldEnabled = true;
+  Boolean walking = false;
+
+  // @FXML
+  // private Rectangle rect;
+
+  // private Rectangle firstrectangle;
 
   @FXML
   private ImageView sprite;
@@ -45,106 +71,288 @@ public class PlayController {
   private Timer timer;
   private boolean isMouseDown;
   private double startTime;
+  ArrayList<Rectangle> rects = new ArrayList<>();
+
+  boolean ignoreClick = false;
+
+  public void updateText(String newText) {
+    scoretext.setText(newText);
+  }
 
   public void addRectangle() {
-    Double firstRectGap = rect.getLayoutX() + rect.getWidth();
-    Rectangle newRectangle = new Rectangle(
-      firstRectGap + Math.random() * 100,
-      437,
-      135.0,
-      283.0
-    );
+    Rectangle lastRect = rects.get(rects.size() - 1);
+    System.out.println("get min x: " + lastRect.getX());
+    Double firstRectGap = lastRect.getX() + lastRect.getWidth();
+    Double randomVal = firstRectGap + getRandomNumberBetween(50, 200);
+    Rectangle newRectangle = new Rectangle(randomVal, 437, 200.0, 283.0);
     newRectangle.setFill(Color.RED);
+    rects.add(newRectangle);
 
     // Add the new rectangle to the AnchorPane
     pane.getChildren().add(newRectangle);
+    newRectangle.toBack();
+  }
+
+  public void dieded() throws IOException {
+    System.out.println("died");
+    // moving the sprite to the edge of the next rectangle
+    TranslateTransition transition = new TranslateTransition(
+      Duration.millis(500),
+      sprite
+    );
+
+    double newX = line.getEndX();
+    double translationXbro = newX - sprite.getX();
+
+    transition.setToX(translationXbro);
+
+    TranslateTransition fall = new TranslateTransition(
+      Duration.millis(500),
+      sprite
+    );
+
+    double newY = 400;
+    double translationY = newY - sprite.getY();
+
+    fall.setByY(translationY);
+    // fall.setOnFinished(onfallover -> {
+    //   try {
+    //     FXMLLoader loader = new FXMLLoader(
+    //       getClass().getResource("game_over.fxml")
+    //     );
+    //     Parent root = loader.load();
+
+    //     GameOverController gameOverController = loader.getController();
+    //     gameOverController.setScore(score);
+
+    //     stage = (Stage) pane.getScene().getWindow();
+    //     stage.setScene(new Scene(root));
+    //     stage.sizeToScene();
+    //     stage.show();
+    //   } catch (IOException e) {
+    //     // Handle the IOException as needed
+    //     e.printStackTrace();
+    //   }
+    // });
+
+    // Set the event handler to start the second transition when the first one is finished
+    transition.setOnFinished(moveTransOver -> {
+      fall.play();
+    });
+
+    // Play the first animation
+    transition.play();
   }
 
   public void initialize() {
-    Rectangle currentRectangle = rect;
-    double currentX = currentRectangle.getX();
-    double currentY = currentRectangle.getY();
-    double currentWidth = currentRectangle.getWidth();
+    Rectangle firstRectangle = new Rectangle(40, 437, 100, 283.0);
+    sprite.toFront();
 
-    // Define the range for the random offsets
-    double minOffset = 50.0; // Minimum distance between rectangles
-    double maxOffset = 100.0; // Maximum distance between rectangles
+    // System.out.println("line.setStartX(" + line.getStartX() + ");");
+    // System.out.println("line.setEndX(" + line.getEndX() + ");");
+    // System.out.println("line.setStartY(" + line.getStartY() + ");");
+    // System.out.println("line.setEndY(" + line.getEndY() + ");");
 
-    // Define the range for the random widths
-    double minWidth = 20.0; // Minimum width of rectangles
-    double maxWidth = 50.0; // Maximum width of rectangles
+    Image image = new Image(getClass().getResourceAsStream("cherry.png"));
+    imageView = new ImageView(image);
+    imageView.setFitWidth(50); // Set the width of the image
+    imageView.setFitHeight(50); // Set the height of the image
+    imageView.setY(445);
 
-    ArrayList<Rectangle> rects = new ArrayList<>();
+    // Add imageView to your layout (e.g., a Pane)
+    pane.getChildren().add(imageView);
 
-    rects.add(new Rectangle(185, 437, 135.0, 283.0));
+    // Add the rectangles to the AnchorPane
+    pane.getChildren().add(firstRectangle);
 
-    // Generate more rectangles
-    for (int i = 0; i < 1; i++) {
-      // Generate random offsets and widths
-      // double offsetX = minOffset + Math.random() * (maxOffset - minOffset);
-      // double offsetY = minOffset + Math.random() * (maxOffset - minOffset);
-      // double width = minWidth + Math.random() * (maxWidth - minWidth);
+    // Set the X position of the sprite
+    sprite.setX(40);
+    rects.add(firstRectangle);
 
-      // // Calculate the position of the new rectangle
-      // double newX = currentX + offsetX;
-      // double newY = currentY + offsetY;
-
-      addRectangle();
-    }
+    addRectangle();
 
     pane.setOnMousePressed(event -> {
-      System.out.println("Mouse clicked");
-
       startTime = System.currentTimeMillis();
-      isMouseDown = true;
+      if (mouseHoldEnabled) {
+        addRectangle();
+        System.out.println("Mouse clicked");
 
-      if (timer == null) {
-        timer = new Timer();
-        timer.scheduleAtFixedRate(
-          new TimerTask() {
-            @Override
-            public void run() {
-              if (isMouseDown) {
-                double elapsedTime = System.currentTimeMillis() - startTime;
-                double lineHeight = elapsedTime * 0.01; // Adjust this factor to control the height growth rate
+        startTime = System.currentTimeMillis();
+        isMouseDown = true;
 
-                line.setEndY(line.getEndY() - lineHeight);
+        if (timer == null) {
+          timer = new Timer();
+          timer.scheduleAtFixedRate(
+            new TimerTask() {
+              @Override
+              public void run() {
+                if (isMouseDown) {
+                  double elapsedTime = System.currentTimeMillis() - startTime;
+                  double lineHeight = elapsedTime * 0.01; // Adjust this factor to control the height growth rate
+
+                  line.setEndY(line.getEndY() - lineHeight);
+                }
               }
-            }
-          },
-          0,
-          10
-        ); // Adjust the delay and period to control the update rate
+            },
+            0,
+            10
+          ); // Adjust the delay and period to control the update rate
+        }
+        blockNum += 1;
+        System.out.println("blockNum: " + blockNum);
+      }
+    });
+
+    pane.setOnMouseClicked(event -> {
+      if (!mouseHoldEnabled && ignoreClick) {
+        System.out.println("mouse click event");
+        // Assuming sprite is an ImageView or a subclass of Node
+        double currentScaleY = sprite.getScaleY();
+
+        System.out.println(sprite.getY());
+        if (currentScaleY == 1) {
+          sprite.setY(sprite.getFitHeight());
+          sprite.setScaleY(-1);
+        } else {
+          sprite.setY(0.0);
+          sprite.setScaleY(1);
+        }
+        // double spriteHeight = sprite.getBoundsInLocal().getHeight();
+
+        // // Set the pivot point at the bottom edge of the image
+        // sprite.setTranslateY(sprite.getTranslateY() + spriteHeight);
+
+        // // Check the current scaleY
+
+        // // Toggle between 1 and -1
+        // sprite.setScaleY(currentScaleY == 1 ? -1 : 1);
+
+        // // Reset the pivot point to the original position
+        // sprite.setTranslateY(sprite.getTranslateY() - spriteHeight);
       }
     });
 
     pane.setOnMouseReleased(event -> {
-      isMouseDown = false;
-      timer.cancel();
-      timer = null;
+      ignoreClick = System.currentTimeMillis() - startTime < 100;
+      if (mouseHoldEnabled) {
+        mouseHoldEnabled = false;
+        isMouseDown = false;
+        timer.cancel();
+        timer = null;
 
-      double angle = Math.toRadians(90.0); // Angle of rotation in degrees
+        // rotating the stick
+        double angle = Math.toRadians(90.0); // Angle of rotation in degrees
 
-      // Calculate the offsets from the start point
-      double dx = line.getEndX() - line.getStartX();
-      double dy = line.getEndY() - line.getStartY();
+        // Calculate the offsets from the start point
+        double dx = line.getEndX() - line.getStartX();
+        double dy = line.getEndY() - line.getStartY();
 
-      // Rotate the end point around the start point
-      double newEndX =
-        line.getStartX() + dx * Math.cos(angle) - dy * Math.sin(angle);
-      double newEndY =
-        line.getStartY() + dx * Math.sin(angle) + dy * Math.cos(angle);
+        // Rotate the end point around the start point
+        double newEndX =
+          line.getStartX() + dx * Math.cos(angle) - dy * Math.sin(angle);
+        double newEndY =
+          line.getStartY() + dx * Math.sin(angle) + dy * Math.cos(angle);
 
-      // Update the line's end coordinates
-      line.setEndX(newEndX);
-      line.setEndY(newEndY);
+        // Update the line's end coordinates
+        line.setEndX(newEndX);
+        line.setEndY(newEndY);
 
-      TranslateTransition transition = new TranslateTransition(
-        Duration.millis(500),
-        sprite
-      );
-      transition.setByX(newEndX - line.getStartX() + 40);
-      transition.play();
+        // System.out.println("line end: " + line.getEndX());
+        // System.out.println(rects.get(blockNum + 1).getX());
+        // System.out.println(
+        //   rects.get(blockNum + 1).getX() + rects.get(blockNum + 1).getWidth()
+        // );
+
+        if (
+          line.getEndX() > rects.get(blockNum).getX() &&
+          line.getEndX() <
+          rects.get(blockNum).getX() +
+          rects.get(blockNum).getWidth()
+        ) {
+          walking = true;
+
+          double newX = rects.get(blockNum).getX();
+          double translationXbro = newX - sprite.getX();
+
+          // Calculate the duration based on the distance and speed
+          double durationMillis = 500.0; // Fixed duration in milliseconds
+
+          // Calculate speed based on the fixed duration
+          double speed = Math.abs(translationXbro) / durationMillis;
+
+          TranslateTransition transition = new TranslateTransition(
+            Duration.millis(750),
+            sprite
+          );
+
+          // TranslateTransition transition = new TranslateTransition(
+          //   Duration.millis(translationXbro / 0.3),
+          //   sprite
+          // );
+
+          transition.setToX(translationXbro);
+
+          Node nodeToExclude = closebtn;
+
+          transition.setOnFinished(boo -> {
+            if (sprite.getScaleY() == -1) {
+              try {
+                dieded();
+              } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+            } else {
+              walking = false;
+              score++;
+              updateText("SCORE: " + score);
+              line.setStartX(
+                rects.get(blockNum).getX() +
+                (rects.get(blockNum).getWidth() / 4) *
+                3
+              );
+              line.setEndX(
+                rects.get(blockNum).getX() +
+                (rects.get(blockNum).getWidth() / 4) *
+                3
+              );
+              line.setStartY(234.5);
+              line.setEndY(234.5);
+              TranslateTransition movePane = new TranslateTransition(
+                Duration.seconds(0.5),
+                pane
+              );
+              // for (Node node : pane.getChildren()) {
+              //   if (node != nodeToExclude) {
+              double targetX = rects.get(blockNum).getX();
+              movePane.setToX(-targetX);
+              movePane.setOnFinished(finishedEvent -> {
+                // Enable mouse events after the transition is finished
+                mouseHoldEnabled = true;
+              });
+
+              movePane.play();
+              //     // .setTranslateX(node.getTranslateX() - 200);
+
+              //   }
+              // }
+              // nodeToExclude.setTranslateX(0); // Reset translation for the excluded node
+              //reset line
+
+            }
+          });
+          // Play the animation
+          transition.play();
+        } else {
+          //dies
+          try {
+            dieded();
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+      }
     });
   }
 

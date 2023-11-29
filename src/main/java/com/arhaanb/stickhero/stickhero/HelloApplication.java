@@ -30,8 +30,7 @@ public class HelloApplication extends Application {
 
     primaryStage.setTitle("Hello!");
     primaryStage.setScene(scene);
-    primaryStage.setResizable(false);
-    primaryStage.sizeToScene();
+    // primaryStage.setResizable(false);
     primaryStage.show();
   }
 }
