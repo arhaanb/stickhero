@@ -40,19 +40,26 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="193.0" layoutY="10.0" minWidth="-Infinity" pickOnBounds="false"
-         prefHeight="49.0" prefWidth="181.0">
+      <AnchorPane layoutX="8.0" layoutY="10.0" minWidth="-Infinity" pickOnBounds="false"
+         prefHeight="65.0" prefWidth="366.0">
          <children>
-            <Text fx:id="scoretext" fill="WHITE" layoutX="-31.0" layoutY="32.0" strokeType="OUTSIDE"
-               strokeWidth="0.0" text="SCORE: 0" textAlignment="RIGHT" wrappingWidth="146.45703125">
+            <Text fx:id="cherrytext" fill="WHITE" layoutX="154.0" layoutY="51.0"
+               strokeType="OUTSIDE" strokeWidth="0.0" text="CHERRIES: 0" textAlignment="RIGHT"
+               wrappingWidth="146.45703125">
                <font>
                   <Font name="Segoe UI Black" size="19.0" />
                </font>
             </Text>
-            <Button fx:id="closebtn1" alignment="CENTER" layoutX="133.0" layoutY="14.0"
-               mnemonicParsing="false" onAction="#switchToHome" prefHeight="49.0" prefWidth="48.0"
+            <Text fx:id="scoretext" fill="WHITE" layoutX="139.0" layoutY="28.0" strokeType="OUTSIDE"
+               strokeWidth="0.0" text="SCORE: 0" textAlignment="RIGHT" wrappingWidth="160.95703125">
+               <font>
+                  <Font name="Segoe UI Black" size="19.0" />
+               </font>
+            </Text>
+            <Button fx:id="closebtn1" alignment="CENTER" layoutX="308.0" mnemonicParsing="false"
+               onAction="#switchToHome" prefHeight="65.0" prefWidth="58.0"
                style="-fx-background-color: transparent;" textOverrun="CLIP"
-               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="133.0"
+               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="308.0"
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <graphic>
                   <ImageView fitHeight="41.0" fitWidth="42.0">

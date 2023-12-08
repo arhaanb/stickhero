@@ -1,13 +1,12 @@
 package com.arhaanb.stickhero.stickhero;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,7 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -32,15 +31,16 @@ public class PlayController {
   private Stage stage;
   private Scene scene;
   private Integer score = 0;
+  private Integer cherries = 0;
   private Integer blockNum = 0;
 
-  public static int getRandomNumberBetween(int min, int max) {
+  public static double getRandomNumberBetween(double min, double max) {
     if (min > max) {
       throw new IllegalArgumentException("Max must be greater than min");
     }
 
     Random random = new Random();
-    return random.nextInt((max - min) + 1) + min;
+    return min + (max - min) * random.nextDouble();
   }
 
   @FXML
@@ -52,7 +52,12 @@ public class PlayController {
   @FXML
   private Text scoretext;
 
-  private ImageView imageView;
+  @FXML
+  private Text cherrytext;
+
+  public Boolean cherryCollected;
+
+  public ImageView cherryView;
 
   Boolean mouseHoldEnabled = true;
   Boolean walking = false;
@@ -79,14 +84,49 @@ public class PlayController {
     scoretext.setText(newText);
   }
 
+  private boolean checkCherryCollision(ImageView player, ImageView fruit) {
+    double x1 = player.getBoundsInParent().getMinX();
+    double x2 = fruit.getBoundsInParent().getMinX();
+    double width1 = player.getBoundsInParent().getWidth();
+    double width2 = fruit.getBoundsInParent().getWidth();
+    boolean crossedXBounds = (x1 < x2 + width2) && (x1 + width1 > x2);
+
+    return crossedXBounds;
+  }
+
   public void addRectangle() {
     Rectangle lastRect = rects.get(rects.size() - 1);
     System.out.println("get min x: " + lastRect.getX());
     Double firstRectGap = lastRect.getX() + lastRect.getWidth();
     Double randomVal = firstRectGap + getRandomNumberBetween(50, 200);
-    Rectangle newRectangle = new Rectangle(randomVal, 437, 200.0, 283.0);
+    Rectangle newRectangle = new Rectangle(
+      randomVal,
+      437,
+      getRandomNumberBetween(50, 200),
+      283.0
+    );
     newRectangle.setFill(Color.RED);
     rects.add(newRectangle);
+
+    Random random = new Random();
+    boolean randomBoolean = random.nextBoolean();
+
+    if (randomBoolean) {
+      // first rect gao to random val - add cherry to a random value between these
+      double cherryXvalue = getRandomNumberBetween(
+        firstRectGap,
+        randomVal - 50
+      );
+
+      Image image = new Image(getClass().getResourceAsStream("cherry.png"));
+      cherryView = new ImageView(image);
+      cherryView.setFitWidth(50); // Set the width of the image
+      cherryView.setFitHeight(50); // Set the height of the image
+      cherryView.setY(445);
+      cherryView.setX(cherryXvalue);
+      System.out.println("cherryXvalue: " + cherryXvalue);
+      pane.getChildren().add(cherryView);
+    }
 
     // Add the new rectangle to the AnchorPane
     pane.getChildren().add(newRectangle);
@@ -154,13 +194,13 @@ public class PlayController {
     // System.out.println("line.setEndY(" + line.getEndY() + ");");
 
     Image image = new Image(getClass().getResourceAsStream("cherry.png"));
-    imageView = new ImageView(image);
-    imageView.setFitWidth(50); // Set the width of the image
-    imageView.setFitHeight(50); // Set the height of the image
-    imageView.setY(445);
+    cherryView = new ImageView(image);
+    cherryView.setFitWidth(50); // Set the width of the image
+    cherryView.setFitHeight(50); // Set the height of the image
+    cherryView.setY(445);
 
     // Add imageView to your layout (e.g., a Pane)
-    pane.getChildren().add(imageView);
+    pane.getChildren().add(cherryView);
 
     // Add the rectangles to the AnchorPane
     pane.getChildren().add(firstRectangle);
@@ -172,39 +212,41 @@ public class PlayController {
     addRectangle();
 
     pane.setOnMousePressed(event -> {
-      startTime = System.currentTimeMillis();
-      if (mouseHoldEnabled) {
-        addRectangle();
-        System.out.println("Mouse clicked");
-
+      if (event.getButton() == MouseButton.PRIMARY) {
         startTime = System.currentTimeMillis();
-        isMouseDown = true;
+        if (mouseHoldEnabled) {
+          // addRectangle();
+          System.out.println("Mouse clicked");
 
-        if (timer == null) {
-          timer = new Timer();
-          timer.scheduleAtFixedRate(
-            new TimerTask() {
-              @Override
-              public void run() {
-                if (isMouseDown) {
-                  double elapsedTime = System.currentTimeMillis() - startTime;
-                  double lineHeight = elapsedTime * 0.01; // Adjust this factor to control the height growth rate
+          startTime = System.currentTimeMillis();
+          isMouseDown = true;
 
-                  line.setEndY(line.getEndY() - lineHeight);
+          if (timer == null) {
+            timer = new Timer();
+            timer.scheduleAtFixedRate(
+              new TimerTask() {
+                @Override
+                public void run() {
+                  if (isMouseDown) {
+                    double elapsedTime = System.currentTimeMillis() - startTime;
+                    double lineHeight = elapsedTime * 0.01; // Adjust this factor to control the height growth rate
+
+                    line.setEndY(line.getEndY() - lineHeight);
+                  }
                 }
-              }
-            },
-            0,
-            10
-          ); // Adjust the delay and period to control the update rate
+              },
+              0,
+              10
+            ); // Adjust the delay and period to control the update rate
+          }
+          blockNum += 1;
+          System.out.println("blockNum: " + blockNum);
         }
-        blockNum += 1;
-        System.out.println("blockNum: " + blockNum);
       }
     });
 
     pane.setOnMouseClicked(event -> {
-      if (!mouseHoldEnabled && ignoreClick) {
+      if (event.getButton() == MouseButton.SECONDARY) {
         System.out.println("mouse click event");
         // Assuming sprite is an ImageView or a subclass of Node
         double currentScaleY = sprite.getScaleY();
@@ -233,123 +275,143 @@ public class PlayController {
     });
 
     pane.setOnMouseReleased(event -> {
-      ignoreClick = System.currentTimeMillis() - startTime < 100;
-      if (mouseHoldEnabled) {
-        mouseHoldEnabled = false;
-        isMouseDown = false;
-        timer.cancel();
-        timer = null;
+      if (event.getButton() == MouseButton.PRIMARY) {
+        ignoreClick = System.currentTimeMillis() - startTime < 100;
+        if (mouseHoldEnabled) {
+          mouseHoldEnabled = false;
+          isMouseDown = false;
+          timer.cancel();
+          timer = null;
 
-        // rotating the stick
-        double angle = Math.toRadians(90.0); // Angle of rotation in degrees
+          // rotating the stick
+          double angle = Math.toRadians(90.0); // Angle of rotation in degrees
 
-        // Calculate the offsets from the start point
-        double dx = line.getEndX() - line.getStartX();
-        double dy = line.getEndY() - line.getStartY();
+          // Calculate the offsets from the start point
+          double dx = line.getEndX() - line.getStartX();
+          double dy = line.getEndY() - line.getStartY();
 
-        // Rotate the end point around the start point
-        double newEndX =
-          line.getStartX() + dx * Math.cos(angle) - dy * Math.sin(angle);
-        double newEndY =
-          line.getStartY() + dx * Math.sin(angle) + dy * Math.cos(angle);
+          // Rotate the end point around the start point
+          double newEndX =
+            line.getStartX() + dx * Math.cos(angle) - dy * Math.sin(angle);
+          double newEndY =
+            line.getStartY() + dx * Math.sin(angle) + dy * Math.cos(angle);
 
-        // Update the line's end coordinates
-        line.setEndX(newEndX);
-        line.setEndY(newEndY);
+          // Update the line's end coordinates
+          line.setEndX(newEndX);
+          line.setEndY(newEndY);
 
-        // System.out.println("line end: " + line.getEndX());
-        // System.out.println(rects.get(blockNum + 1).getX());
-        // System.out.println(
-        //   rects.get(blockNum + 1).getX() + rects.get(blockNum + 1).getWidth()
-        // );
-
-        if (
-          line.getEndX() > rects.get(blockNum).getX() &&
-          line.getEndX() <
-          rects.get(blockNum).getX() +
-          rects.get(blockNum).getWidth()
-        ) {
-          walking = true;
-
-          double newX = rects.get(blockNum).getX();
-          double translationXbro = newX - sprite.getX();
-
-          // Calculate the duration based on the distance and speed
-          double durationMillis = 500.0; // Fixed duration in milliseconds
-
-          // Calculate speed based on the fixed duration
-          double speed = Math.abs(translationXbro) / durationMillis;
-
-          TranslateTransition transition = new TranslateTransition(
-            Duration.millis(750),
-            sprite
-          );
-
-          // TranslateTransition transition = new TranslateTransition(
-          //   Duration.millis(translationXbro / 0.3),
-          //   sprite
+          // System.out.println("line end: " + line.getEndX());
+          // System.out.println(rects.get(blockNum + 1).getX());
+          // System.out.println(
+          //   rects.get(blockNum + 1).getX() + rects.get(blockNum + 1).getWidth()
           // );
 
-          transition.setToX(translationXbro);
+          if (
+            line.getEndX() > rects.get(blockNum).getX() &&
+            line.getEndX() <
+            rects.get(blockNum).getX() +
+            rects.get(blockNum).getWidth()
+          ) {
+            walking = true;
 
-          Node nodeToExclude = closebtn;
+            double newX = rects.get(blockNum).getX();
+            double translationXbro = newX - sprite.getX();
 
-          transition.setOnFinished(boo -> {
-            if (sprite.getScaleY() == -1) {
-              try {
-                dieded();
-              } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-              }
-            } else {
-              walking = false;
-              score++;
-              updateText("SCORE: " + score);
-              line.setStartX(
-                rects.get(blockNum).getX() +
-                (rects.get(blockNum).getWidth() / 4) *
-                3
-              );
-              line.setEndX(
-                rects.get(blockNum).getX() +
-                (rects.get(blockNum).getWidth() / 4) *
-                3
-              );
-              line.setStartY(234.5);
-              line.setEndY(234.5);
-              TranslateTransition movePane = new TranslateTransition(
-                Duration.seconds(0.5),
-                pane
-              );
-              // for (Node node : pane.getChildren()) {
-              //   if (node != nodeToExclude) {
-              double targetX = rects.get(blockNum).getX();
-              movePane.setToX(-targetX);
-              movePane.setOnFinished(finishedEvent -> {
-                // Enable mouse events after the transition is finished
-                mouseHoldEnabled = true;
-              });
+            // Calculate the duration based on the distance and speed
+            // double durationMillis = 500.0; // Fixed duration in milliseconds
 
-              movePane.play();
-              //     // .setTranslateX(node.getTranslateX() - 200);
+            // Calculate speed based on the fixed duration
+            // double speed = Math.abs(translationXbro) / durationMillis;
 
-              //   }
+            TranslateTransition transition = new TranslateTransition(
+              Duration.millis(750),
+              sprite
+            );
+
+            // TranslateTransition transition = new TranslateTransition(
+            //   Duration.millis(translationXbro / 0.3),
+            //   sprite
+            // );
+
+            transition.setToX(translationXbro);
+
+            Timeline positionPrintTimeline = new Timeline(
+              new KeyFrame(
+                Duration.millis(100),
+                posevent -> {
+                  if (
+                    checkCherryCollision(sprite, cherryView) &&
+                    sprite.getScaleY() == -1
+                  ) {
+                    System.out.println("cherry collected");
+                    cherryCollected = true;
+                    pane.getChildren().remove(cherryView);
+                  }
+                }
+              )
+            );
+
+            positionPrintTimeline.setCycleCount(Timeline.INDEFINITE);
+
+            // Node nodeToExclude = closebtn;
+
+            transition.setOnFinished(boo -> {
+              // if (cherryCollected) {
+              //   cherryCollected = false;
+              //   cherries += 1;
+              //   cherrytext.setText("CHERRIES: " + cherries);
               // }
-              // nodeToExclude.setTranslateX(0); // Reset translation for the excluded node
-              //reset line
+              positionPrintTimeline.stop();
+              if (sprite.getScaleY() == -1) {
+                try {
+                  dieded();
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              } else {
+                walking = false;
+                score++;
+                updateText("SCORE: " + score);
+                line.setStartX(
+                  rects.get(blockNum).getX() +
+                  (rects.get(blockNum).getWidth() / 4) *
+                  3
+                );
+                line.setEndX(
+                  rects.get(blockNum).getX() +
+                  (rects.get(blockNum).getWidth() / 4) *
+                  3
+                );
+                line.setStartY(234.5);
+                line.setEndY(234.5);
+                addRectangle();
 
+                TranslateTransition movePane = new TranslateTransition(
+                  Duration.seconds(0.5),
+                  pane
+                );
+                // for (Node node : pane.getChildren()) {
+                //   if (node != nodeToExclude) {
+                double targetX = rects.get(blockNum).getX();
+                movePane.setToX(-targetX);
+                movePane.setOnFinished(finishedEvent -> {
+                  // Enable mouse events after the transition is finished
+                  mouseHoldEnabled = true;
+                });
+
+                movePane.play();
+              }
+            });
+            // Play the animation
+            transition.play();
+            positionPrintTimeline.play();
+          } else {
+            //dies
+            try {
+              dieded();
+            } catch (IOException e) {
+              e.printStackTrace();
             }
-          });
-          // Play the animation
-          transition.play();
-        } else {
-          //dies
-          try {
-            dieded();
-          } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
           }
         }
       }
