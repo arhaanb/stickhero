@@ -55,7 +55,7 @@ public class PlayController {
   @FXML
   private Text cherrytext;
 
-  public Boolean cherryCollected;
+  private Boolean cherryCollected = false;
 
   public ImageView cherryView;
 
@@ -356,11 +356,11 @@ public class PlayController {
             // Node nodeToExclude = closebtn;
 
             transition.setOnFinished(boo -> {
-              // if (cherryCollected) {
-              //   cherryCollected = false;
-              //   cherries += 1;
-              //   cherrytext.setText("CHERRIES: " + cherries);
-              // }
+              if (cherryCollected) {
+                cherryCollected = false;
+                cherries += 1;
+                cherrytext.setText("CHERRIES: " + cherries);
+              }
               positionPrintTimeline.stop();
               if (sprite.getScaleY() == -1) {
                 try {
@@ -392,7 +392,7 @@ public class PlayController {
                 );
                 // for (Node node : pane.getChildren()) {
                 //   if (node != nodeToExclude) {
-                double targetX = rects.get(blockNum).getX();
+                double targetX = rects.get(blockNum).getX() - 100;
                 movePane.setToX(-targetX);
                 movePane.setOnFinished(finishedEvent -> {
                   // Enable mouse events after the transition is finished

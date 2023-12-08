@@ -15,9 +15,9 @@
     <URL value="./application.css" />
   </stylesheets>  -->
   <children>
-      <ImageView fitHeight="720.0" fitWidth="382.0">
+      <ImageView fitHeight="720.0" fitWidth="630.0">
          <image>
-            <Image url="@bg.png" />
+            <Image url="@bg-wide.png" />
          </image>
       </ImageView>
     <VBox alignment="CENTER" prefHeight="720.0" prefWidth="382.0" spacing="20.0">
