@@ -3,7 +3,6 @@ package com.arhaanb.stickhero.stickhero;
 
 public class Pillar extends Obstacle {
 
-  @Override
   public void move() {
     throw new UnsupportedOperationException("Unimplemented method 'move'");
   }

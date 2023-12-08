@@ -20,7 +20,6 @@ public class HelloApplication extends Application {
   @Override
   public void start(Stage primaryStage) throws IOException {
     primaryStage.setTitle("Stick Hero");
-    player = new Player();
 
     FXMLLoader fxmlLoader = new FXMLLoader(
       HelloApplication.class.getResource("hello-view.fxml")

@@ -7,7 +7,6 @@ public class Stick extends Entity implements Movable {
     throw new UnsupportedOperationException("Unimplemented method 'draw'");
   }
 
-  @Override
   public void move() {
     throw new UnsupportedOperationException("Unimplemented method 'move'");
   }

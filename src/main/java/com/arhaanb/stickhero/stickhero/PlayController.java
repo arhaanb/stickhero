@@ -71,13 +71,10 @@ public class PlayController {
   Boolean mouseHoldEnabled = true;
   Boolean walking = false;
 
-  // @FXML
-  // private Rectangle rect;
-
-  // private Rectangle firstrectangle;
-
   @FXML
   private ImageView sprite;
+
+  private Player player;
 
   @FXML
   private Line line;
@@ -134,13 +131,11 @@ public class PlayController {
       line.setStartY(234.5);
       line.setEndY(234.5);
 
-      //minus 2 cherries
+      // minus 2 cherries
       cherries -= 2;
       over_pane.setVisible(false);
     });
 
-    // To play the undo animation, call play() on undoFall
-    // For example, if you want to undo the translation after a certain condition is met:
     undoFall.play();
   }
 
@@ -164,7 +159,7 @@ public class PlayController {
                 public void run() {
                   if (isMouseDown) {
                     double elapsedTime = System.currentTimeMillis() - startTime;
-                    double lineHeight = elapsedTime * 0.01; // Adjust this factor to control the height growth rate
+                    double lineHeight = elapsedTime * 0.01; // adjust this factor to control the height growth rate
 
                     line.setEndY(line.getEndY() - lineHeight);
                   }
@@ -181,16 +176,7 @@ public class PlayController {
 
     pane.setOnMouseClicked(event -> {
       if (event.getButton() == MouseButton.SECONDARY) {
-        double currentScaleY = sprite.getScaleY();
-
-        System.out.println(sprite.getY());
-        if (currentScaleY == 1) {
-          sprite.setY(sprite.getFitHeight());
-          sprite.setScaleY(-1);
-        } else {
-          sprite.setY(0.0);
-          sprite.setScaleY(1);
-        }
+        player.flipSprite();
       }
     });
 
@@ -203,28 +189,18 @@ public class PlayController {
           timer.cancel();
           timer = null;
 
-          // rotating the stick
-          double angle = Math.toRadians(90.0); // Angle of rotation in degrees
+          double angle = Math.toRadians(90.0);
 
-          // Calculate the offsets from the start point
           double dx = line.getEndX() - line.getStartX();
           double dy = line.getEndY() - line.getStartY();
 
-          // Rotate the end point around the start point
           double newEndX =
             line.getStartX() + dx * Math.cos(angle) - dy * Math.sin(angle);
           double newEndY =
             line.getStartY() + dx * Math.sin(angle) + dy * Math.cos(angle);
 
-          // Update the line's end coordinates
           line.setEndX(newEndX);
           line.setEndY(newEndY);
-
-          // System.out.println("line end: " + line.getEndX());
-          // System.out.println(rects.get(blockNum + 1).getX());
-          // System.out.println(
-          //   rects.get(blockNum + 1).getX() + rects.get(blockNum + 1).getWidth()
-          // );
 
           if (
             line.getEndX() > rects.get(rects.size() - 1).getX() &&
@@ -235,7 +211,7 @@ public class PlayController {
             walking = true;
 
             double newX = rects.get(rects.size() - 1).getX();
-            double translationXbro = newX - sprite.getX();
+            double translationXbro = newX - player.getX();
 
             TranslateTransition transition = new TranslateTransition(
               Duration.millis(750),
@@ -418,6 +394,8 @@ public class PlayController {
   }
 
   public void initialize() {
+    player = Player.getInstance(sprite);
+
     Rectangle firstRectangle = new Rectangle(40, 437, 100, 283.0);
     sprite.toFront();
     System.out.println(sprite.getY());
