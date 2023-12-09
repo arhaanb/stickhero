@@ -45,4 +45,12 @@ public class Stick implements Movable {
   @Override
   public void move(double targetX, double targetY) {
   }
+
+  public ImageView getLine() {
+    return line;
+  }
+
+  public void setLine(ImageView line) {
+    this.line = line;
+  }
 }

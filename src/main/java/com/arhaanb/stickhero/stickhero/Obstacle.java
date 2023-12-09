@@ -1,3 +1,10 @@
 package com.arhaanb.stickhero.stickhero;
 
-public abstract class Obstacle extends Entity implements Movable, Touchable {}
+import javafx.scene.shape.Rectangle;
+
+public abstract class Obstacle {
+
+  public static Rectangle add() {
+    return null;
+  }
+}

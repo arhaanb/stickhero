@@ -5,7 +5,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class Pillar {
+public class Pillar extends Obstacle {
 
   private static ArrayList<Rectangle> pillars = new ArrayList<>();
   private static Pane pane;
