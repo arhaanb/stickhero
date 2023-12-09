@@ -3,29 +3,17 @@ package com.arhaanb.stickhero.stickhero;
 import java.util.ArrayList;
 import javafx.scene.shape.Rectangle;
 
-public class Pillar extends Obstacle {
+public class Pillar {
 
-  private static ArrayList<Rectangle> rects = new ArrayList<>();
-
-  public void move() {
-    throw new UnsupportedOperationException("Unimplemented method 'move'");
-  }
-
-  @Override
-  public void onTouch() {
-    throw new UnsupportedOperationException("Unimplemented method 'onTouch'");
-  }
-
-  @Override
-  public void draw() {
-    throw new UnsupportedOperationException("Unimplemented method 'draw'");
-  }
+  private static ArrayList<Rectangle> pillars = new ArrayList<>();
 
   public static ArrayList<Rectangle> getRects() {
-    return rects;
+    return pillars;
   }
 
   public static Integer numrects() {
-    return rects.size();
+    return pillars.size();
   }
+
+  
 }

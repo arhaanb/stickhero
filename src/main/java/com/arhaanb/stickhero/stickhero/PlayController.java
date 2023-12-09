@@ -1,5 +1,6 @@
 package com.arhaanb.stickhero.stickhero;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -19,6 +20,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -188,6 +191,12 @@ public class PlayController {
     });
 
     pane.setOnMouseReleased(event -> {
+      String path = "run.mp3";
+      Media media = new Media(new File(path).toURI().toString());
+      MediaPlayer mediaPlayer = new MediaPlayer(media);
+      mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+      mediaPlayer.setVolume(0.1);
+
       if (getClickEventsEnabled() && event.getButton() == MouseButton.PRIMARY) {
         ignoreClick = System.currentTimeMillis() - startTime < 100;
         if (mouseHoldEnabled) {
@@ -216,6 +225,7 @@ public class PlayController {
             rects.get(Pillar.numrects() - 1).getWidth()
           ) {
             walking = true;
+            mediaPlayer.play();
 
             double newX = rects.get(Pillar.numrects() - 1).getX();
             double translationXbro = newX - player.getX();
@@ -249,6 +259,7 @@ public class PlayController {
 
             transition.setOnFinished(boo -> {
               blockNum += 1;
+              mediaPlayer.stop();
 
               if (cherryCollected) {
                 cherryCollected = false;
@@ -366,6 +377,13 @@ public class PlayController {
   }
 
   public void dieded(String how) throws IOException {
+    String path = "run.mp3";
+    Media media = new Media(new File(path).toURI().toString());
+    MediaPlayer mediaPlayer = new MediaPlayer(media);
+    mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+    mediaPlayer.setVolume(0.1);
+    mediaPlayer.play();
+
     System.out.println("died");
 
     setClickEventsEnabled(false);
@@ -395,6 +413,7 @@ public class PlayController {
     });
 
     transition.setOnFinished(moveTransOver -> {
+      mediaPlayer.stop();
       sprite.setY(0.0);
       sprite.setScaleY(1);
       double translationY = newY - sprite.getY();
