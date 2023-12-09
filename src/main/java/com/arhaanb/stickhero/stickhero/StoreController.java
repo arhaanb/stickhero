@@ -78,6 +78,7 @@ public class StoreController {
 
   @FXML
   public void buyTheme1(ActionEvent event) throws IOException {
+    System.out.println("buying theme 1");
     ArrayList<Integer> owned = Utility.getOwnedThemes();
 
     if (Utility.getTotalCherries() > 4) {
@@ -89,6 +90,12 @@ public class StoreController {
       Theme.setSelectedTheme(Theme.getThemes().get(1));
       Utility.setSelectedTheme(1);
     }
+
+    Player.resetInstance();
+
+    Stage currentStage = (Stage) ((Node) event.getSource()).getScene()
+      .getWindow();
+    currentStage.close();
 
     Parent root = FXMLLoader.load(getClass().getResource("play.fxml"));
     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -108,6 +115,12 @@ public class StoreController {
 
     Theme.setSelectedTheme(Theme.getThemes().get(2));
     Utility.setSelectedTheme(2);
+
+    Player.resetInstance();
+
+    Stage currentStage = (Stage) ((Node) event.getSource()).getScene()
+      .getWindow();
+    currentStage.close();
 
     Parent root = FXMLLoader.load(getClass().getResource("play.fxml"));
     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
