@@ -64,6 +64,9 @@ public class PlayController {
   private Text cherrytext;
 
   @FXML
+  private Text high_score;
+
+  @FXML
   private Button revive_btn;
 
   private Boolean cherryCollected = false;
@@ -123,8 +126,6 @@ public class PlayController {
     undoFall.setToX(rects.get(Pillar.numrects() - 2).getX() - player.getX()); // Set to the negative of the previous translation
 
     undoFall.setOnFinished(afterUndo -> {
-      updateText(Integer.toString(cherries - 2), cherrytext);
-
       setClickEventsEnabled(true);
       line.setStartX(
         rects.get(Pillar.numrects() - 2).getX() +
@@ -152,7 +153,6 @@ public class PlayController {
         System.out.println("heloleolerol");
         startTime = System.currentTimeMillis();
         if (mouseHoldEnabled) {
-          // addRectangle();
           System.out.println("Mouse clicked");
 
           startTime = System.currentTimeMillis();
@@ -338,27 +338,20 @@ public class PlayController {
   }
 
   public void addRectangle() {
+    Pillar.setPane(pane);
     Rectangle lastRect = rects.get(Pillar.numrects() - 1);
-    System.out.println("get min x: " + lastRect.getX());
-    Double firstRectGap = lastRect.getX() + lastRect.getWidth();
-    Double randomVal = firstRectGap + Utility.getRandomNumberBetween(50, 200);
-    Rectangle newRectangle = new Rectangle(
-      randomVal,
-      437,
-      Utility.getRandomNumberBetween(50, 200),
-      283.0
-    );
-    newRectangle.setFill(Color.RED);
-    rects.add(newRectangle);
+    Rectangle newRectangle = Pillar.add(lastRect.getX(), lastRect.getWidth());
+
+    pane.getChildren().add(newRectangle);
+    Pillar.getRects().add(newRectangle);
 
     Random random = new Random();
     boolean randomBoolean = random.nextBoolean();
 
     if (randomBoolean) {
-      // first rect gap to random val - add cherry to a random value between these
-      double cherryXvalue = Utility.getRandomNumberBetween(
-        firstRectGap,
-        randomVal - 50
+      double cherryXvalue = Cherry.getCherryCoords(
+        lastRect.getX() + lastRect.getWidth(),
+        newRectangle.getX()
       );
 
       Image image = new Image(getClass().getResourceAsStream("cherry.png"));
@@ -370,13 +363,15 @@ public class PlayController {
       System.out.println("cherryXvalue: " + cherryXvalue);
       pane.getChildren().add(cherryView);
     }
-
-    // Add the new rectangle to the AnchorPane
-    pane.getChildren().add(newRectangle);
-    newRectangle.toBack();
   }
 
   public void dieded(String how) throws IOException {
+    if (Utility.getHighScore() < score) {
+      Utility.updateScore(score);
+    }
+    updateText(Integer.toString(Utility.getHighScore()), high_score);
+    Utility.lastScore(score);
+
     Utility.updateCherries(cherries);
     if (Utility.getTotalCherries() < 2) {
       revive_btn.setVisible(false);

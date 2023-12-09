@@ -18,20 +18,6 @@ public class Utility {
     return min + (max - min) * random.nextDouble();
   }
 
-  public static void saveToFile(
-    String filename,
-    Integer score,
-    Integer cherries
-  ) {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-      writer.write(String.valueOf(score));
-      writer.newLine();
-      writer.write(String.valueOf(cherries));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
   public static void loadFromFile(
     String filename,
     Integer score,
@@ -43,6 +29,58 @@ public class Utility {
     } catch (IOException | NumberFormatException e) {
       e.printStackTrace();
     }
+  }
+
+  public static Integer readTheme() {
+    Integer theme = 0;
+    try (
+      BufferedReader reader = new BufferedReader(
+        new FileReader("selected_theme.txt")
+      )
+    ) {
+      theme = Integer.parseInt(reader.readLine());
+    } catch (IOException | NumberFormatException e) {
+      e.printStackTrace();
+    }
+    return theme;
+  }
+
+  public static Integer getHighScore() {
+    Integer high_score = 0;
+    try (
+      BufferedReader reader = new BufferedReader(
+        new FileReader("high_score.txt")
+      )
+    ) {
+      high_score = Integer.parseInt(reader.readLine());
+    } catch (IOException | NumberFormatException e) {
+      e.printStackTrace();
+    }
+    return high_score;
+  }
+
+  public static void updateScore(Integer score) throws IOException {
+    try {
+      BufferedWriter writer = new BufferedWriter(
+        new FileWriter("high_score.txt")
+      );
+      writer.write(String.valueOf(score));
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {}
+  }
+
+  public static void lastScore(Integer score) throws IOException {
+    try {
+      BufferedWriter writer = new BufferedWriter(
+        new FileWriter("last_score.txt")
+      );
+      writer.write(String.valueOf(score));
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {}
   }
 
   public static void updateCherries(Integer cherries) throws IOException {

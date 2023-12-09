@@ -8,6 +8,10 @@ public class Cherry {
   private ImageView imageView;
   private static Integer number;
 
+  public static Double getCherryCoords(Double firstRectGap, Double lastRectX) {
+    return Utility.getRandomNumberBetween(firstRectGap, lastRectX - 50);
+  }
+
   public Cherry(double initialX) {
     Image image = new Image(getClass().getResourceAsStream("cherry.png"));
     imageView = new ImageView(image);

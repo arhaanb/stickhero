@@ -1,6 +1,7 @@
 package com.arhaanb.stickhero.stickhero;
 
 import java.io.IOException;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +42,11 @@ public class HelloController {
     scene = new Scene(root);
     stage.setScene(scene);
     stage.show();
+  }
+
+  @FXML
+  public void saveExit(ActionEvent event) throws IOException {
+    Platform.exit();
   }
 
   @FXML

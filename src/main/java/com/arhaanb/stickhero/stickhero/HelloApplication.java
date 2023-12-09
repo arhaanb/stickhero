@@ -51,7 +51,9 @@ public class HelloApplication extends Application {
 
     Theme.getThemes().add(theme1);
     Theme.getThemes().add(theme2);
-    Theme.setSelectedTheme(theme2);
+
+    Integer themeIndex = Utility.readTheme();
+    Theme.setSelectedTheme(Theme.getThemes().get(themeIndex));
 
     String path = "bg-music.mp3";
     Media media = new Media(new File(path).toURI().toString());

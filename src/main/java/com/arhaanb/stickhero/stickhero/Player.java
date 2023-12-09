@@ -20,14 +20,14 @@ public class Player implements Movable {
     return instance;
   }
 
-  public void move(double targetX, double targetY, Runnable onFinished) {
+  @Override
+  public void move(double targetX, double targetY) {
     TranslateTransition transition = new TranslateTransition(
       Duration.millis(750),
       sprite
     );
     transition.setToX(targetX);
     transition.setToY(targetY);
-    transition.setOnFinished(event -> onFinished.run());
     transition.play();
   }
 
