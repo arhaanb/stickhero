@@ -43,6 +43,8 @@ public class PlayController {
     return min + (max - min) * random.nextDouble();
   }
 
+  private Boolean clickEventsEnabled = true;
+
   @FXML
   private AnchorPane pane;
 
@@ -83,7 +85,7 @@ public class PlayController {
   private Timer timer;
   private boolean isMouseDown;
   private double startTime;
-  ArrayList<Rectangle> rects = new ArrayList<>();
+  ArrayList<Rectangle> rects = Pillar.getRects();
 
   boolean ignoreClick = false;
 
@@ -98,7 +100,7 @@ public class PlayController {
     mouseHoldEnabled = true;
 
     //reset player position
-    // sprite.setX(rects.get(rects.size() - 1).getBoundsInLocal().getMinX());
+    // sprite.setX(rects.get(Pillar.numrects() - 1).getBoundsInLocal().getMinX());
     // sprite.setX(0);
 
     attachMouseHandlers();
@@ -113,19 +115,20 @@ public class PlayController {
     );
 
     undoFall.setByY(-400 - player.getY()); // Set to the negative of the previous translation
-    undoFall.setToX(rects.get(rects.size() - 2).getX() - player.getX()); // Set to the negative of the previous translation
+    undoFall.setToX(rects.get(Pillar.numrects() - 2).getX() - player.getX()); // Set to the negative of the previous translation
 
     undoFall.setOnFinished(afterUndo -> {
       updateText(Integer.toString(cherries - 2), cherrytext);
 
+      setClickEventsEnabled(true);
       line.setStartX(
-        rects.get(rects.size() - 2).getX() +
-        (rects.get(rects.size() - 2).getWidth() / 4) *
+        rects.get(Pillar.numrects() - 2).getX() +
+        (rects.get(Pillar.numrects() - 2).getWidth() / 4) *
         3
       );
       line.setEndX(
-        rects.get(rects.size() - 2).getX() +
-        (rects.get(rects.size() - 2).getWidth() / 4) *
+        rects.get(Pillar.numrects() - 2).getX() +
+        (rects.get(Pillar.numrects() - 2).getWidth() / 4) *
         3
       );
 
@@ -142,7 +145,7 @@ public class PlayController {
 
   private void attachMouseHandlers() {
     pane.setOnMousePressed(event -> {
-      if (event.getButton() == MouseButton.PRIMARY) {
+      if (getClickEventsEnabled() && event.getButton() == MouseButton.PRIMARY) {
         System.out.println("heloleolerol");
         startTime = System.currentTimeMillis();
         if (mouseHoldEnabled) {
@@ -176,14 +179,16 @@ public class PlayController {
     });
 
     pane.setOnMouseClicked(event -> {
-      if (event.getButton() == MouseButton.SECONDARY) {
+      if (
+        getClickEventsEnabled() && event.getButton() == MouseButton.SECONDARY
+      ) {
         System.out.println("is this detected");
         player.flipSprite();
       }
     });
 
     pane.setOnMouseReleased(event -> {
-      if (event.getButton() == MouseButton.PRIMARY) {
+      if (getClickEventsEnabled() && event.getButton() == MouseButton.PRIMARY) {
         ignoreClick = System.currentTimeMillis() - startTime < 100;
         if (mouseHoldEnabled) {
           mouseHoldEnabled = false;
@@ -205,14 +210,14 @@ public class PlayController {
           line.setEndY(newEndY);
 
           if (
-            line.getEndX() > rects.get(rects.size() - 1).getX() &&
+            line.getEndX() > rects.get(Pillar.numrects() - 1).getX() &&
             line.getEndX() <
-            rects.get(rects.size() - 1).getX() +
-            rects.get(rects.size() - 1).getWidth()
+            rects.get(Pillar.numrects() - 1).getX() +
+            rects.get(Pillar.numrects() - 1).getWidth()
           ) {
             walking = true;
 
-            double newX = rects.get(rects.size() - 1).getX();
+            double newX = rects.get(Pillar.numrects() - 1).getX();
             double translationXbro = newX - player.getX();
 
             TranslateTransition transition = new TranslateTransition(
@@ -264,13 +269,13 @@ public class PlayController {
 
                 // reset stick
                 line.setStartX(
-                  rects.get(rects.size() - 1).getX() +
-                  (rects.get(rects.size() - 1).getWidth() / 4) *
+                  rects.get(Pillar.numrects() - 1).getX() +
+                  (rects.get(Pillar.numrects() - 1).getWidth() / 4) *
                   3
                 );
                 line.setEndX(
-                  rects.get(rects.size() - 1).getX() +
-                  (rects.get(rects.size() - 1).getWidth() / 4) *
+                  rects.get(Pillar.numrects() - 1).getX() +
+                  (rects.get(Pillar.numrects() - 1).getWidth() / 4) *
                   3
                 );
 
@@ -286,7 +291,7 @@ public class PlayController {
                   pane
                 );
 
-                double targetX = rects.get(rects.size()-2).getX() - 100;
+                double targetX = rects.get(Pillar.numrects() - 2).getX() - 100;
                 movePane.setToX(-targetX);
                 movePane.setOnFinished(finishedEvent -> {
                   mouseHoldEnabled = true;
@@ -322,7 +327,7 @@ public class PlayController {
   }
 
   public void addRectangle() {
-    Rectangle lastRect = rects.get(rects.size() - 1);
+    Rectangle lastRect = rects.get(Pillar.numrects() - 1);
     System.out.println("get min x: " + lastRect.getX());
     Double firstRectGap = lastRect.getX() + lastRect.getWidth();
     Double randomVal = firstRectGap + getRandomNumberBetween(50, 200);
@@ -363,6 +368,8 @@ public class PlayController {
   public void dieded(String how) throws IOException {
     System.out.println("died");
 
+    setClickEventsEnabled(false);
+
     // moving the sprite to the edge of the next rectangle
     TranslateTransition transition = new TranslateTransition(
       Duration.millis(500),
@@ -401,6 +408,7 @@ public class PlayController {
   }
 
   public void initialize() {
+    setClickEventsEnabled(true);
     player = Player.getInstance(sprite);
 
     Rectangle firstRectangle = new Rectangle(40, 437, 100, 283.0);
@@ -458,5 +466,13 @@ public class PlayController {
     scene = new Scene(root);
     stage.setScene(scene);
     stage.show();
+  }
+
+  public Boolean getClickEventsEnabled() {
+    return clickEventsEnabled;
+  }
+
+  public void setClickEventsEnabled(Boolean clickEventsEnabled) {
+    this.clickEventsEnabled = clickEventsEnabled;
   }
 }
