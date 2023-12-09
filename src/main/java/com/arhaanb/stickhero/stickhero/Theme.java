@@ -1,24 +1,27 @@
 package com.arhaanb.stickhero.stickhero;
 
+import java.util.ArrayList;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 public class Theme {
 
-  private ImageView backgroundImage;
-  private ImageView spriteImage;
+  private Image backgroundImage;
+  private Image spriteImage;
   private Color rectangleColor;
+
+  private static ArrayList<Theme> themes = new ArrayList<>();
+  private static Theme selectedTheme;
 
   private Theme() {
     // private constructor to enforce the use of the builder
   }
 
-  public ImageView getBackgroundImage() {
+  public Image getBackgroundImage() {
     return backgroundImage;
   }
 
-  public ImageView getSpriteImage() {
+  public Image getSpriteImage() {
     return spriteImage;
   }
 
@@ -34,12 +37,12 @@ public class Theme {
       theme = new Theme();
     }
 
-    public ThemeBuilder setBackgroundImage(ImageView backgroundImage) {
+    public ThemeBuilder setBackgroundImage(Image backgroundImage) {
       theme.backgroundImage = backgroundImage;
       return this;
     }
 
-    public ThemeBuilder setSpriteImage(ImageView spriteImage) {
+    public ThemeBuilder setSpriteImage(Image spriteImage) {
       theme.spriteImage = spriteImage;
       return this;
     }
@@ -52,5 +55,17 @@ public class Theme {
     public Theme build() {
       return theme;
     }
+  }
+
+  public static Theme getSelectedTheme() {
+    return selectedTheme;
+  }
+
+  public static void setSelectedTheme(Theme selectedTheme) {
+    Theme.selectedTheme = selectedTheme;
+  }
+
+  public static ArrayList<Theme> getThemes() {
+    return themes;
   }
 }

@@ -16,7 +16,7 @@
    <children>
       <AnchorPane>
          <children>
-            <ImageView fitHeight="720.0" fitWidth="630.0">
+            <ImageView fx:id="bg_image" fitHeight="720.0" fitWidth="630.0">
                <image>
                   <Image url="@bg-wide.png" />
                </image>

@@ -58,6 +58,9 @@ public class PlayController {
   private Button closebtn;
 
   @FXML
+  private ImageView bg_image;
+
+  @FXML
   private Text scoretext; // top bar text
 
   @FXML
@@ -427,6 +430,8 @@ public class PlayController {
   }
 
   public void initialize() {
+    bg_image.setImage(Theme.getSelectedTheme().getBackgroundImage());
+    sprite.setImage(Theme.getSelectedTheme().getSpriteImage());
     setClickEventsEnabled(true);
     player = Player.getInstance(sprite);
 

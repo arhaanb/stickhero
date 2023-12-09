@@ -7,23 +7,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 public class HelloController {
 
   private Stage stage;
   private Scene scene;
-  private MediaPlayer mediaPlayer;
-
-  public void setMediaPlayer(MediaPlayer mediaPlayer) {
-    this.mediaPlayer = mediaPlayer;
-  }
-
-  @FXML
-  public void pauseMusic() {
-    this.mediaPlayer.pause();
-  }
 
   @FXML
   public void switchToPlay(ActionEvent event) throws IOException {
@@ -61,9 +50,5 @@ public class HelloController {
     scene = new Scene(root);
     stage.setScene(scene);
     stage.show();
-  }
-
-  public MediaPlayer getMediaPlayer() {
-    return mediaPlayer;
   }
 }
