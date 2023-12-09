@@ -491,16 +491,13 @@ public class PlayController {
   }
 
   @FXML
-  public void switchToSettings(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("settings.fxml"));
-    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-    scene = new Scene(root);
-    stage.setScene(scene);
-    stage.show();
-  }
+  public void closeButton(ActionEvent event) throws IOException {
+    Utility.updateCherries(cherries);
+    Utility.lastScore(score);
+    if (Utility.getHighScore() < score) {
+      Utility.updateScore(score);
+    }
 
-  @FXML
-  public void onHelloButtonClick(ActionEvent event) throws IOException {
     Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     scene = new Scene(root);
