@@ -8,36 +8,62 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.arhaanb.stickhero.stickhero.HelloController">
-  <!-- <stylesheets>
+<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="com.arhaanb.stickhero.stickhero.HelloController">
+   <!-- <stylesheets>
     <URL value="./application.css" />
   </stylesheets>  -->
-  <children>
-      <ImageView fitHeight="720.0" fitWidth="630.0">
+   <children>
+      <ImageView fitHeight="720.0" fitWidth="647.0">
          <image>
             <Image url="@bg-wide.png" />
          </image>
       </ImageView>
-    <VBox alignment="CENTER" prefHeight="720.0" prefWidth="382.0" spacing="20.0">
-      <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-      </padding>
-      <Button alignment="CENTER" contentDisplay="CENTER" ellipsisString="" onAction="#switchToPlay" prefHeight="53.0" prefWidth="149.0" style="-fx-background-color: orange; -fx-background-radius: 10px;" text="Play!" textAlignment="CENTER" textOverrun="CLIP">
+      <VBox alignment="CENTER" layoutX="-4.0" prefHeight="720.0" prefWidth="647.0" spacing="20.0">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stick Hero">
             <font>
-               <Font size="25.0" />
+               <Font name="System Bold" size="64.0" />
+            </font>
+            <fill>
+               <LinearGradient endX="1.0" endY="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="0.35789474844932556" green="0.35789474844932556"
+                              blue="0.35789474844932556" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </LinearGradient>
+            </fill>
+         </Text>
+         <Button alignment="CENTER" contentDisplay="CENTER" ellipsisString=""
+            onAction="#switchToPlay" prefHeight="53.0" prefWidth="149.0"
+            style="-fx-background-color: black; -fx-background-radius: 10px;" text="PLAY"
+            textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
+            <font>
+               <Font name="System Bold" size="36.0" />
             </font>
             <cursor>
                <Cursor fx:constant="HAND" />
-            </cursor></Button>
-
-      <Label fx:id="welcomeText" />
-      <Button onAction="#switchToSettings" prefHeight="53.0" prefWidth="151.0" style="-fx-background-color: #222; -fx-background-radius: 10px;" text="Settings" textAlignment="CENTER" textFill="WHITE">
-            <font>
-               <Font size="25.0" />
-            </font>
+            </cursor>
          </Button>
-    </VBox>
-  </children>
+
+         <Label fx:id="welcomeText" />
+      </VBox>
+   </children>
 </AnchorPane>

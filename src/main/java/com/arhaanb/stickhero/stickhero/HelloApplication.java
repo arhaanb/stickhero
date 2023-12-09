@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -55,9 +56,17 @@ public class HelloApplication extends Application {
     String path = "bg-music.mp3";
     Media media = new Media(new File(path).toURI().toString());
     MediaPlayer mediaPlayer = new MediaPlayer(media);
-    mediaPlayer.setAutoPlay(true);
     mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+    mediaPlayer.setAutoPlay(true);
     mediaPlayer.setVolume(0.1);
+
+    Platform.setImplicitExit(false);
+
+    primaryStage.setOnCloseRequest(event -> {
+      mediaPlayer.stop();
+      Platform.exit();
+      System.exit(0);
+    });
 
     primaryStage.setScene(scene);
     primaryStage.setResizable(false);

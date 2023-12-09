@@ -37,15 +37,6 @@ public class PlayController {
   private Integer cherries = 0;
   private Integer blockNum = 0;
 
-  public static double getRandomNumberBetween(double min, double max) {
-    if (min > max) {
-      throw new IllegalArgumentException("Max must be greater than min");
-    }
-
-    Random random = new Random();
-    return min + (max - min) * random.nextDouble();
-  }
-
   private Boolean clickEventsEnabled = true;
 
   @FXML
@@ -71,6 +62,9 @@ public class PlayController {
 
   @FXML
   private Text cherrytext;
+
+  @FXML
+  private Button revive_btn;
 
   private Boolean cherryCollected = false;
 
@@ -102,6 +96,11 @@ public class PlayController {
   @FXML
   public void revive() {
     System.out.println("reviving player");
+    try {
+      Utility.updateCherries(-2);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
     mouseHoldEnabled = true;
 
@@ -141,8 +140,6 @@ public class PlayController {
       line.setStartY(234.5);
       line.setEndY(234.5);
 
-      // minus 2 cherries
-      cherries -= 2;
       over_pane.setVisible(false);
     });
 
@@ -344,11 +341,11 @@ public class PlayController {
     Rectangle lastRect = rects.get(Pillar.numrects() - 1);
     System.out.println("get min x: " + lastRect.getX());
     Double firstRectGap = lastRect.getX() + lastRect.getWidth();
-    Double randomVal = firstRectGap + getRandomNumberBetween(50, 200);
+    Double randomVal = firstRectGap + Utility.getRandomNumberBetween(50, 200);
     Rectangle newRectangle = new Rectangle(
       randomVal,
       437,
-      getRandomNumberBetween(50, 200),
+      Utility.getRandomNumberBetween(50, 200),
       283.0
     );
     newRectangle.setFill(Color.RED);
@@ -359,7 +356,7 @@ public class PlayController {
 
     if (randomBoolean) {
       // first rect gap to random val - add cherry to a random value between these
-      double cherryXvalue = getRandomNumberBetween(
+      double cherryXvalue = Utility.getRandomNumberBetween(
         firstRectGap,
         randomVal - 50
       );
@@ -380,6 +377,14 @@ public class PlayController {
   }
 
   public void dieded(String how) throws IOException {
+    Utility.updateCherries(cherries);
+    if (Utility.getTotalCherries() < 2) {
+      revive_btn.setVisible(false);
+    } else {
+      revive_btn.setVisible(true);
+    }
+    updateText(Integer.toString(Utility.getTotalCherries()), total_cherries);
+
     String path = "run.mp3";
     Media media = new Media(new File(path).toURI().toString());
     MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -430,6 +435,7 @@ public class PlayController {
   }
 
   public void initialize() {
+    over_pane.setVisible(false);
     bg_image.setImage(Theme.getSelectedTheme().getBackgroundImage());
     sprite.setImage(Theme.getSelectedTheme().getSpriteImage());
     setClickEventsEnabled(true);
