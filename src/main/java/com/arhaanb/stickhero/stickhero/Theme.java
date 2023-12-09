@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+/* 
+A building design pattern has been used here. This allows for 
+customizing certain elements of the theme using different combinations 
+very easily like building blocks. Its implementation can be seen in 
+the HelloApplication.java file.
+*/
+
 public class Theme {
 
   private Image backgroundImage;

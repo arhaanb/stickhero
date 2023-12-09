@@ -37,6 +37,10 @@ public class HelloApplication extends Application {
     Scene scene;
     scene = new Scene(fxmlLoader.load());
 
+    /* 
+      Using the building design pattern here to customize and create themes.
+    */
+
     Theme theme1 = new Theme.ThemeBuilder()
       .setBackgroundImage(new Image(new FileInputStream("themes/1/bg.png")))
       .setSpriteImage(new Image(new FileInputStream("themes/1/sprite.png")))

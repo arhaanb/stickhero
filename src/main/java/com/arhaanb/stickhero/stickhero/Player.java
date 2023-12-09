@@ -4,6 +4,11 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
+/* 
+A singleton design pattern has been used here since the player always 
+remains the same throughout the game and there is only one being used
+*/
+
 public class Player implements Movable {
 
   private static Player instance;
