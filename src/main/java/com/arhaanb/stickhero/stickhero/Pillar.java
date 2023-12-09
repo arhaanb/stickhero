@@ -34,9 +34,6 @@ public class Pillar {
     newRectangle.setFill(Color.RED);
     newRectangle.toBack();
 
-    // getRects().add(newRectangle);
-    // getPane().getChildren().add(newRectangle);
-
     return newRectangle;
   }
 

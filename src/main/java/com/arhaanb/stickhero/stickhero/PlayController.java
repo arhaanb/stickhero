@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -129,19 +130,22 @@ public class PlayController {
 
     undoFall.setOnFinished(afterUndo -> {
       setClickEventsEnabled(true);
-      line.setStartX(
-        rects.get(Pillar.numrects() - 2).getX() +
-        (rects.get(Pillar.numrects() - 2).getWidth() / 4) *
-        3
-      );
-      line.setEndX(
-        rects.get(Pillar.numrects() - 2).getX() +
-        (rects.get(Pillar.numrects() - 2).getWidth() / 4) *
-        3
-      );
 
-      line.setStartY(234.5);
-      line.setEndY(234.5);
+      Platform.runLater(() -> {
+        line.setStartX(
+          rects.get(Pillar.numrects() - 2).getX() +
+          (rects.get(Pillar.numrects() - 2).getWidth() / 4) *
+          3
+        );
+        line.setEndX(
+          rects.get(Pillar.numrects() - 2).getX() +
+          (rects.get(Pillar.numrects() - 2).getWidth() / 4) *
+          3
+        );
+
+        line.setStartY(234.5);
+        line.setEndY(234.5);
+      });
 
       over_pane.setVisible(false);
     });
@@ -311,12 +315,16 @@ public class PlayController {
                   mouseHoldEnabled = true;
                 });
 
-                movePane.play();
+                Platform.runLater(() -> {
+                  movePane.play();
+                });
               }
             });
             // Play the animation
-            transition.play();
-            positionPrintTimeline.play();
+            Platform.runLater(() -> {
+              transition.play();
+              positionPrintTimeline.play();
+            });
           } else {
             //dies
             try {
@@ -345,8 +353,10 @@ public class PlayController {
     Rectangle lastRect = rects.get(Pillar.numrects() - 1);
     Rectangle newRectangle = Pillar.add(lastRect.getX(), lastRect.getWidth());
 
-    pane.getChildren().add(newRectangle);
     Pillar.getRects().add(newRectangle);
+    Platform.runLater(() -> {
+      pane.getChildren().add(newRectangle);
+    });
 
     Random random = new Random();
     boolean randomBoolean = random.nextBoolean();
@@ -357,14 +367,16 @@ public class PlayController {
         newRectangle.getX()
       );
 
-      Image image = new Image(getClass().getResourceAsStream("cherry.png"));
-      cherryView = new ImageView(image);
-      cherryView.setFitWidth(50);
-      cherryView.setFitHeight(50);
-      cherryView.setY(445);
-      cherryView.setX(cherryXvalue);
-      System.out.println("cherryXvalue: " + cherryXvalue);
-      pane.getChildren().add(cherryView);
+      Platform.runLater(() -> {
+        Image image = new Image(getClass().getResourceAsStream("cherry.png"));
+        cherryView = new ImageView(image);
+        cherryView.setFitWidth(50);
+        cherryView.setFitHeight(50);
+        cherryView.setY(445);
+        cherryView.setX(cherryXvalue);
+        System.out.println("cherryXvalue: " + cherryXvalue);
+        pane.getChildren().add(cherryView);
+      });
     }
   }
 

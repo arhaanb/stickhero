@@ -12,6 +12,8 @@ public class Cherry {
     return Utility.getRandomNumberBetween(firstRectGap, lastRectX - 50);
   }
 
+  public static void add() {}
+
   public Cherry(double initialX) {
     Image image = new Image(getClass().getResourceAsStream("cherry.png"));
     imageView = new ImageView(image);
