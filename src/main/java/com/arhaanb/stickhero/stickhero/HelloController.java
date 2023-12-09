@@ -36,8 +36,8 @@ public class HelloController {
   }
 
   @FXML
-  public void switchToSettings(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("settings.fxml"));
+  public void switchToStore(ActionEvent event) throws IOException {
+    Parent root = FXMLLoader.load(getClass().getResource("store.fxml"));
     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     scene = new Scene(root);
     stage.setScene(scene);

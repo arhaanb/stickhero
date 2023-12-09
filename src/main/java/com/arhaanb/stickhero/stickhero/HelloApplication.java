@@ -49,8 +49,15 @@ public class HelloApplication extends Application {
       .setRectangleColor(Color.RED)
       .build();
 
+    Theme theme3 = new Theme.ThemeBuilder()
+      .setBackgroundImage(new Image(new FileInputStream("themes/3/bg.png")))
+      .setSpriteImage(new Image(new FileInputStream("themes/3/sprite.png")))
+      .setRectangleColor(Color.RED)
+      .build();
+
     Theme.getThemes().add(theme1);
     Theme.getThemes().add(theme2);
+    Theme.getThemes().add(theme3);
 
     Integer themeIndex = Utility.readTheme();
     Theme.setSelectedTheme(Theme.getThemes().get(themeIndex));

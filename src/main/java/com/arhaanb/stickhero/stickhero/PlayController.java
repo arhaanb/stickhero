@@ -22,7 +22,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -41,6 +40,9 @@ public class PlayController {
 
   @FXML
   private AnchorPane pane;
+
+  @FXML
+  private AnchorPane tut;
 
   @FXML
   private AnchorPane over_pane;
@@ -149,6 +151,7 @@ public class PlayController {
 
   private void attachMouseHandlers() {
     pane.setOnMousePressed(event -> {
+      tut.setVisible(false);
       if (getClickEventsEnabled() && event.getButton() == MouseButton.PRIMARY) {
         System.out.println("heloleolerol");
         startTime = System.currentTimeMillis();
