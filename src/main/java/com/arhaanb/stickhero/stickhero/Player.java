@@ -31,6 +31,10 @@ public class Player implements Movable {
     transition.play();
   }
 
+  public static void resetInstance() {
+    instance = null;
+  }
+
   public void flipSprite() {
     double currentScaleY = sprite.getScaleY();
 
@@ -57,5 +61,9 @@ public class Player implements Movable {
 
   public void setY(double y) {
     sprite.setY(y);
+  }
+
+  public ImageView getSprite() {
+    return sprite;
   }
 }

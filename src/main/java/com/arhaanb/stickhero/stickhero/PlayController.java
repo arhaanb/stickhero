@@ -66,7 +66,8 @@ public class PlayController {
 
   private Boolean cherryCollected = false;
 
-  public ImageView cherryView;
+  Image cherimg = new Image(getClass().getResourceAsStream("cherry.png"));
+  public ImageView cherryView = new ImageView(cherimg);
 
   Boolean mouseHoldEnabled = true;
   Boolean walking = false;
@@ -108,11 +109,11 @@ public class PlayController {
 
     TranslateTransition undoFall = new TranslateTransition(
       Duration.millis(100),
-      sprite
+      player.getSprite()
     );
 
-    undoFall.setByY(-400 - sprite.getY()); // Set to the negative of the previous translation
-    undoFall.setToX(rects.get(rects.size() - 2).getX() - sprite.getX()); // Set to the negative of the previous translation
+    undoFall.setByY(-400 - player.getY()); // Set to the negative of the previous translation
+    undoFall.setToX(rects.get(rects.size() - 2).getX() - player.getX()); // Set to the negative of the previous translation
 
     undoFall.setOnFinished(afterUndo -> {
       updateText(Integer.toString(cherries - 2), cherrytext);
@@ -176,6 +177,7 @@ public class PlayController {
 
     pane.setOnMouseClicked(event -> {
       if (event.getButton() == MouseButton.SECONDARY) {
+        System.out.println("is this detected");
         player.flipSprite();
       }
     });
@@ -252,7 +254,7 @@ public class PlayController {
               positionPrintTimeline.stop();
               if (sprite.getScaleY() == -1) {
                 try {
-                  dieded();
+                  dieded("upside");
                 } catch (IOException e) {
                   e.printStackTrace();
                 }
@@ -262,18 +264,20 @@ public class PlayController {
 
                 // reset stick
                 line.setStartX(
-                  rects.get(blockNum).getX() +
-                  (rects.get(blockNum).getWidth() / 4) *
+                  rects.get(rects.size() - 1).getX() +
+                  (rects.get(rects.size() - 1).getWidth() / 4) *
                   3
                 );
                 line.setEndX(
-                  rects.get(blockNum).getX() +
-                  (rects.get(blockNum).getWidth() / 4) *
+                  rects.get(rects.size() - 1).getX() +
+                  (rects.get(rects.size() - 1).getWidth() / 4) *
                   3
                 );
 
                 line.setStartY(234.5);
                 line.setEndY(234.5);
+
+                System.out.println("im here");
 
                 addRectangle();
 
@@ -282,7 +286,7 @@ public class PlayController {
                   pane
                 );
 
-                double targetX = rects.get(blockNum).getX() - 100;
+                double targetX = rects.get(rects.size()-2).getX() - 100;
                 movePane.setToX(-targetX);
                 movePane.setOnFinished(finishedEvent -> {
                   mouseHoldEnabled = true;
@@ -297,7 +301,7 @@ public class PlayController {
           } else {
             //dies
             try {
-              dieded();
+              dieded("straight");
             } catch (IOException e) {
               e.printStackTrace();
             }
@@ -335,7 +339,7 @@ public class PlayController {
     boolean randomBoolean = random.nextBoolean();
 
     if (randomBoolean) {
-      // first rect gao to random val - add cherry to a random value between these
+      // first rect gap to random val - add cherry to a random value between these
       double cherryXvalue = getRandomNumberBetween(
         firstRectGap,
         randomVal - 50
@@ -343,8 +347,8 @@ public class PlayController {
 
       Image image = new Image(getClass().getResourceAsStream("cherry.png"));
       cherryView = new ImageView(image);
-      cherryView.setFitWidth(50); // Set the width of the image
-      cherryView.setFitHeight(50); // Set the height of the image
+      cherryView.setFitWidth(50);
+      cherryView.setFitHeight(50);
       cherryView.setY(445);
       cherryView.setX(cherryXvalue);
       System.out.println("cherryXvalue: " + cherryXvalue);
@@ -356,8 +360,9 @@ public class PlayController {
     newRectangle.toBack();
   }
 
-  public void dieded() throws IOException {
+  public void dieded(String how) throws IOException {
     System.out.println("died");
+
     // moving the sprite to the edge of the next rectangle
     TranslateTransition transition = new TranslateTransition(
       Duration.millis(500),
@@ -375,9 +380,6 @@ public class PlayController {
     );
 
     double newY = 400;
-    double translationY = newY - sprite.getY();
-
-    fall.setByY(translationY);
 
     fall.setOnFinished(afterFall -> {
       updateText(Integer.toString(score), scorenum);
@@ -386,6 +388,11 @@ public class PlayController {
     });
 
     transition.setOnFinished(moveTransOver -> {
+      sprite.setY(0.0);
+      sprite.setScaleY(1);
+      double translationY = newY - sprite.getY();
+
+      fall.setByY(translationY);
       fall.play();
     });
 
@@ -400,19 +407,6 @@ public class PlayController {
     sprite.toFront();
     System.out.println(sprite.getY());
 
-    // System.out.println("line.setStartX(" + line.getStartX() + ");");
-    // System.out.println("line.setEndX(" + line.getEndX() + ");");
-    // System.out.println("line.setStartY(" + line.getStartY() + ");");
-    // System.out.println("line.setEndY(" + line.getEndY() + ");");
-
-    Image image = new Image(getClass().getResourceAsStream("cherry.png"));
-    cherryView = new ImageView(image);
-    cherryView.setFitWidth(50);
-    cherryView.setFitHeight(50);
-    cherryView.setY(445);
-
-    pane.getChildren().add(cherryView);
-
     pane.getChildren().add(firstRectangle);
 
     sprite.setX(40);
@@ -425,6 +419,13 @@ public class PlayController {
 
   @FXML
   public void switchToPlay(ActionEvent event) throws IOException {
+    Player.resetInstance();
+
+    // close the current stage
+    Stage currentStage = (Stage) ((Node) event.getSource()).getScene()
+      .getWindow();
+    currentStage.close();
+
     Parent root = FXMLLoader.load(getClass().getResource("play.fxml"));
     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     scene = new Scene(root);

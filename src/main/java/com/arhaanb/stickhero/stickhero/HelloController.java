@@ -16,6 +16,8 @@ public class HelloController {
 
   @FXML
   public void switchToPlay(ActionEvent event) throws IOException {
+    Player.resetInstance();
+
     Parent root = FXMLLoader.load(getClass().getResource("play.fxml"));
     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     scene = new Scene(root);
