@@ -1,6 +1,6 @@
 # Stick Hero
 
-> Final project for CSE201 (Advanced Programming), Built by [Arhaan Bahadur](https://arhaanb.com) (2022093) and Ishir Bhardwaj (2022223).
+> Final project for CSE201 (Advanced Programming), Built by [Arhaan Bahadur](https://arhaanb.com) (2022093) and [Ishir Bhardwa](https://ishirbhardwaj.github.io/) (2022223).
 
 ## OOP Concepts Used
 - Interfaces - Movable which is implemented by Stick and Player classes
