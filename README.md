@@ -1,8 +1,21 @@
 # Stick Hero
 
-> Final project for CSE201 (Advanced Programming), Built by [Arhaan Bahadur](https://arhaanb.com) (2022093) and [Ishir Bhardwaj](https://ishirbhardwaj.github.io/) (2022223).
+> Final project for CSE201 (Advanced Programming), built by [Arhaan Bahadur](https://arhaanb.com) (2022093) and [Ishir Bhardwaj](https://ishirbhardwaj.github.io/) (2022223). Made using Java and JavaFX.
+
+## UI
+
+- Main Menu<br>
+  <img src="images/main.jpg" alt="Main Menu" width="400">
+- Gameplay<br>
+  <img src="images/instructions.jpg" alt="Instructions" width="400"><br>
+  <img src="images/game.jpg" alt="Game" width="400">
+- Themes<br>
+  <img src="images/themes.jpg" alt="Themes" width="400">
+- Game Over<br>
+  <img src="images/gameover.jpg" alt="Game Over" width="400">
 
 ## OOP Concepts Used
+
 - Interfaces - Movable which is implemented by Stick and Player classes
 - Abstract Classes - Obstacle class which is extended by the Pillar class
 - Abstraction - Users are only shown simple UI elements to work with. The complex code is hidden
@@ -18,26 +31,32 @@
   - A few functions use multiple custom variations of Random. These have been tested.
 
 ## Features
+
 - Sound effects
 - Reviving with cherries
 
 ## Bonus
+
 - Themes can be bought with collected cherries
 - Multithreading: implemented using the `Platform.runLater()` functions. The project is structured in a way to make UI updates on a separate thread (and background logic functions are running on another thread) - Check PlayController for implementation.
 
 ## Steps to run
+
 > Make sure JDK SE 21.0 is installed
 
 ### To run the game
-- ```mvn compile```
-- ```mvn javafx:run```
+
+- `mvn compile`
+- `mvn javafx:run`
 
 ### To run tests
-- ```mvn test```
+
+- `mvn test`
 
 Alternatively, the application can be launched inside IntelliJ by opening the HelloApplication.java file inside src\main\java\com\arhaanb\stickhero\stickhero and running it (using Shift+F10).
 
 ## How it works
+
 The application functions as follows:
 
 1. Left-clicking initiates the generation of a stick, while right-clicking toggles the ability to collect cherries.
