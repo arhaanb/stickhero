@@ -14,6 +14,10 @@
 - Game Over<br>
   <img src="images/gameover.jpg" alt="Game Over" width="400">
 
+## UML Diagram
+
+  <img src="uml.png" alt="UML" width="600">
+
 ## OOP Concepts Used
 
 - Interfaces - Movable which is implemented by Stick and Player classes
